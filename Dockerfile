@@ -3,8 +3,8 @@ FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apk add --no-cache gcc musl-dev
+# Install build dependencies (sqlite-dev required for mattn/go-sqlite3)
+RUN apk add --no-cache gcc musl-dev sqlite-dev
 
 # Copy go mod files
 COPY go.mod go.sum* ./
