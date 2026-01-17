@@ -1,10 +1,13 @@
 # Build stage
-FROM golang:1.22-alpine AS builder
+FROM golang:1.22-bookworm AS builder
 
 WORKDIR /app
 
-# Install build dependencies (sqlite-dev required for mattn/go-sqlite3)
-RUN apk add --no-cache gcc musl-dev sqlite-dev
+# Install build dependencies (sqlite required for mattn/go-sqlite3)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy go mod files
 COPY go.mod go.sum* ./
