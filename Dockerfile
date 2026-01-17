@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     tzdata \
     wget \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
@@ -43,8 +44,9 @@ WORKDIR /app
 # Copy binary from builder
 COPY --from=builder /app/server /usr/local/bin/server
 
-# Switch to non-root user
-USER appuser
+# Copy entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose port
 EXPOSE 8080
@@ -60,4 +62,4 @@ ENV PORT=8080 \
     WEBHOOK_RETRY_COUNT=3
 
 # Run the application
-CMD ["server"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
