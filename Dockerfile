@@ -22,13 +22,18 @@ COPY . .
 RUN CGO_ENABLED=1 GOOS=linux go build -o server ./cmd/server
 
 # Runtime stage
-FROM alpine:3.19
+FROM debian:bookworm-slim
 
 # Install runtime dependencies
-RUN apk add --no-cache ffmpeg ca-certificates tzdata
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    ca-certificates \
+    tzdata \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN adduser -D -g '' appuser
+RUN useradd -r -s /bin/false appuser
 
 # Create directories
 RUN mkdir -p /data /config && chown -R appuser:appuser /data /config
